@@ -311,7 +311,7 @@ const CadastrarObra = async (req, res) => {
 // funções para excluir (delete)
 const ExcluirObra = async (req, res) => {
   try {
-    const { id_obra } = req;
+    const { id_obra } = req.params;
 
     if (!id_obra) {
       return res

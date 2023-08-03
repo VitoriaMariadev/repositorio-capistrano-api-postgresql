@@ -311,16 +311,17 @@ const CadastrarObra = async (req, res) => {
 // funções para excluir (delete)
 const ExcluirObra = async (req, res) => {
   try {
-    const { id_obra } = req.params;
+    const {id_obra} = req.params;
+    console.log(id_obra)
 
     if (!id_obra) {
       return res
-        .status(200)
+        .status(400)
         .json({ Mensagem: "Id não informado.", status: 400 });
     }
 
     // excluindo relacionamento obra
-    await pool.query(`DELETE FROM obra_autores WHERE id_obra = ${id_obra}`);
+    await pool.query(`DELETE FROM obras_autores WHERE id_obra = ${id_obra}`);
 
     await pool.query(`DELETE FROM obra WHERE id_obra = ${id_obra}`);
 

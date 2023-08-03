@@ -30,7 +30,7 @@ route.post("/cadastro_obras", CadastrarObra)
 
 
 // excluir
-route.delete("/excluir_obra/:id", ExcluirObra)
+route.delete("/excluir_obra/:id_obra", ExcluirObra)
 
 // autor
 route.post("/cadastro_autor", CadastrarAutor)

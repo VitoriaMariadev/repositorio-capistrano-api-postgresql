@@ -567,7 +567,7 @@ const CadastrarObra = async (req, res) => {
 
   
   const TituloFormatado = primeiraLetraMaiuscula(titulo);
-  const descricaoFormatada = primeiraLetraMaiuscula(descricao);
+  const descricaoFormatada = descricao.trim()
   const resumoFormatado = capitalizarEPontuar(resumo).trim();
   const dataFormatada = data_publi.trim();
   try {

@@ -24,8 +24,9 @@ INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
 INNER JOIN link li ON li.id_link = ol.id_link
 INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
 INNER JOIN img im ON im.id_img = oi.id_img
-GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.resumo, ass.nome, li.link, im.link, au.nome
+GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.resumo
 ORDER BY o.id_obra;
+
       `);
 
       console.log(obra)

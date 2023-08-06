@@ -94,7 +94,7 @@ route.patch("/editar_obra", EditarObra);
 // autor
 route.post("/cadastro_autor", CadastrarAutor);
 route.get("/mostrar_todos_autores", MostrarTodosAutores);
-route.get("/mostrar_autor:id", MostrarAutorID);
+route.get("/mostrar_autor/:id", MostrarAutorID);
 route.patch("/editar_autor", EditarAutor);
 route.delete("/excluir_autor", ExcluirAutor)
 
@@ -114,7 +114,7 @@ route.post("deletar_token", deletarToken);
 
 // administrador
 route.post("/cadastrar_adm", CadastrarAdministrador);
-route.get("/mostrar_adm:id", MostrarAdministradorID);
+route.get("/mostrar_adm/:id", MostrarAdministradorID);
 route.get("/mostrar_todos_adm", MostrarTodosAdministradores);
 route.delete("/deletar_adm", RemoveAdministrados);
 
@@ -122,21 +122,21 @@ route.delete("/deletar_adm", RemoveAdministrados);
 route.post("/mostrar_assuntos", MostrarTodosAssuntos);
 route.get("/mostrar_assuntoid/:id", MostrarAssuntosID);
 route.post("/cadastrar_assunto", CadastrarAssunto);
-route.delete("/deletar_assunto", ExcluirAssunto);
+route.delete("/deletar_assunto/:id_assunto", ExcluirAssunto);
 route.patch("/editar_assunto", EditarAssunto);
 
 // link
 route.get("/mostrar_linkid/:id", MostrarLinkID);
 route.get("/msotrar_todos_links", MostrarTodoslinks);
 route.post("/cadastrar_link", CadastrarLink);
-route.delete("/remover_link", ExcluirLink);
+route.delete("/remover_link/:id_link ", ExcluirLink);
 route.patch("/editar_link", EditarLink);
 
 // img
 route.get("/mostrar_imgid/:id", MostrarImgID);
 route.get("/msotrar_todos_imgs", MostrarTodosimg);
 route.post("/cadastrar_img", CadastrarImagem);
-route.delete("/remover_img", ExcluirImg);
+route.delete("/remover_img/:id_img", ExcluirImg);
 route.patch("/editar_img", EditarImg);
 
 export default route;

@@ -3,7 +3,7 @@ const { Pool } = pg;
 
 const pool = new Pool({
   connectionString:
-  "postgres://default:NQfchj9iIYw4@ep-holy-unit-04638423.us-east-1.postgres.vercel-storage.com:5432/verceldb",
+  "postgres://default:lOACJLHI0oX5@ep-noisy-wind-97242483.us-east-1.postgres.vercel-storage.com:5432/verceldb",
   ssl: {
     rejectUnauthorized: false,
     sslmode: "require",
@@ -39,7 +39,6 @@ const createTables = async () => {
       id_obra SERIAL PRIMARY KEY,
       id_usuario INTEGER REFERENCES usuario(id_usuario),
       titulo VARCHAR(255),
-      link VARCHAR(255),
       resumo TEXT,
       descricao TEXT,
       data_publi DATE

@@ -568,9 +568,9 @@ const CadastrarObra = async (req, res) => {
     assunto,
     link,
     img,
+    usuario
   } = req.body;
 
-  const {usuario} = req.params
   
   const TituloFormatado = primeiraLetraMaiuscula(titulo);
   const descricaoFormatada = primeiraLetraMaiuscula(descricao);

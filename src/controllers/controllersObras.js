@@ -632,43 +632,39 @@ const CadastrarObra = async (req, res) => {
       }
     }
 
-    const lista_link_id = [];
-    for (const link_nome of link) {
-      // Use 'const' em vez de 'let' para a variável de loop
-      const linkFormatado = link_nome.trim();
-      const verificaLink = await pool.query(
-        "SELECT id_link FROM link WHERE link = $1",
-        [linkFormatado]
-      );
+const lista_link_id = [];
+for (const link_nome of link) {
+  const linkFormatado = link_nome.trim();
+  const verificaLink = await pool.query(
+    "SELECT id_link FROM link WHERE link = $1",
+    [linkFormatado]
+  );
 
-      if (verificaLink.rows.length > 0) {
-        lista_img_id.push(verificaLink.rows[0].id_link);
-      } else {
-        // Lida com o caso em que o autor não existe
-        return res
-          .status(200)
-          .json({ Mensagem: "Link não encontrada.", status: 400 });
-      }
-    }
+  if (verificaLink.rows.length > 0) {
+    lista_link_id.push(verificaLink.rows[0].id_link); // Correção do nome da lista
+  } else {
+    return res
+      .status(200)
+      .json({ Mensagem: "Link não encontrado.", status: 400 });
+  }
+}
 
-    const lista_img_id = [];
-    for (const img_nome of img) {
-      // Use 'const' em vez de 'let' para a variável de loop
-      const ImgFormatado = img_nome.trim();
-      const verificaImg = await pool.query(
-        "SELECT id_img FROM img WHERE link = $1",
-        [ImgFormatado]
-      );
+const lista_img_id = [];
+for (const img_nome of img) {
+  const ImgFormatado = img_nome.trim();
+  const verificaImg = await pool.query(
+    "SELECT id_img FROM img WHERE link = $1",
+    [ImgFormatado]
+  );
 
-      if (verificaImg.rows.length > 0) {
-        lista_img_id.push(verificaImg.rows[0].id_img);
-      } else {
-        // Lida com o caso em que o autor não existe
-        return res
-          .status(200)
-          .json({ Mensagem: "Imagem não encontrada.", status: 400 });
-      }
-    }
+  if (verificaImg.rows.length > 0) {
+    lista_img_id.push(verificaImg.rows[0].id_img); // Correção do nome da lista
+  } else {
+    return res
+      .status(200)
+      .json({ Mensagem: "Imagem não encontrada.", status: 400 });
+  }
+}
 
     console.log(lista_autores_id);
     // Insere a obra

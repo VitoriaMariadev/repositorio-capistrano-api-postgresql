@@ -45,37 +45,39 @@ const MostrarObraPeloID = async (req, res) => {
   const { id } = req.params;
   try {
     const Obra = await pool.query(`
-      SELECT 
-      o.titulo,
-      o.data_publi,
-      o.resumo,
-      u.nome as usuario,  
-      string_agg(DISTINCT li.link, ', ') as links, 
-      string_agg(DISTINCT im.link, ', ') as imgs,
-      string_agg(DISTINCT ass.nome, ', ') as assuntos,
-      string_agg(DISTINCT au.nome, ', ') as autores,
-      o.descricao
-  FROM 
-      obra o
-  INNER JOIN 
-      obras_autores oa ON o.id_obra = oa.id_obra
-  INNER JOIN 
-      autor au ON au.id_autor = oa.id_autor
-  INNER JOIN 
-      usuario u ON u.id_usuario = o.id_usuario
-  INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-  INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-  INNER JOIN link li ON li.id_link = li.id_link
-  INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-  INNER JOIN img im ON im.id_img = oi.id_img
-  WHERE 
-      o.id_obra = ${id}
-  GROUP BY 
-      o.titulo,
-      o.data_publi,
-      o.resumo,
-      u.nome,
-      o.descricao;
+        SELECT 
+        o.titulo,
+        o.data_publi,
+        o.resumo,
+        u.nome as usuario,
+        string_agg(DISTINCT li.link, ', ') as links,
+        string_agg(DISTINCT im.link, ', ') as imgs,
+        string_agg(DISTINCT ass.nome, ', ') as assuntos,
+        string_agg(DISTINCT au.nome, ', ') as autores,
+        o.descricao
+    FROM 
+        obra o
+    INNER JOIN 
+        obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN 
+        autor au ON au.id_autor = oa.id_autor
+    INNER JOIN 
+        usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON o.id_obra = ol.id_obra -- Join with obras_links
+    INNER JOIN link li ON ol.id_link = li.id_link -- Join with link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE 
+        o.id_obra = ${id}
+    GROUP BY 
+        o.titulo,
+        o.data_publi,
+        o.resumo,
+        u.nome,
+        o.descricao;
+
     ;`);
 
     res.status(200).json(Obra.rows[0]);

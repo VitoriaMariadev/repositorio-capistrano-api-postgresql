@@ -8,7 +8,7 @@ import {
   MostrarTodasobra,
   MostrarTodasobraCapistrano,
   MostrarTodasobraOutrosAutores,
-  MostrarTodasobraOutrosAutores,
+  MostrarTodasObrasAleatorio,
   ObrasOrdemAlfabetica,
   MostrarObraPeloIDUsuario,
   MostrarObrasPeloIDAutor,

@@ -9,7 +9,7 @@ import {
 // funções para mostrar (get)
 const MostrarTodosUsuarios = async (req, res) => {
   try {
-    const usuarios = await pool.query("SELECT nome FROM usuario");
+    const usuarios = await pool.query("SELECT * FROM usuario");
 
     if (usuarios.rows.length === 0) {
       return res

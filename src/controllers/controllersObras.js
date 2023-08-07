@@ -127,7 +127,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
 
 const ObrasOrdemAlfabetica = async (req, res) => {
   try {
-    obras = await pool.query(`
+    const obras = await pool.query(`
       SELECT 
       o.id_obra, o.titulo, o.data_publi, o.resumo, u.nome as usuario,
       string_agg(DISTINCT li.link, ', ') as links, 

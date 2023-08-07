@@ -113,7 +113,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
         INNER JOIN link li ON li.id_link = ol.id_link
         INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
         INNER JOIN img im ON im.id_img = oi.id_img
-        where assunto = $1
+        where ass.nome = $1
         GROUP BY o.id_obra, u.nome, o.titulo, o.resumo, o.data_publi, ass.nome, li.link, im.link, au.nome
         ORDER BY o.id_obra
         `,

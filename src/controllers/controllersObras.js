@@ -119,7 +119,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
         `,
       [assunto]
     );
-    res.status(200).json(obras.rows[0]);
+    res.status(200).json(obras.rows);
   } catch (erro) {
     return res.status(500).json({ Message: erro.Message });
   }

@@ -108,7 +108,7 @@ route.get("/mostrar_autores_dos_usuarios", AutorCadaUsuario);
 route.post("/cadastro_usuarios", CadastrarUsuario);
 route.post("/login", Login);
 
-route.delete("/excluir_usuario/:id", removeUsuarioID);
+route.delete("/excluir_usuario/:id_usuario", removeUsuarioID);
 
 // token
 route.post("validar_token", validarToken);

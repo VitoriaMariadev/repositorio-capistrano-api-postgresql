@@ -225,6 +225,48 @@ const ObrasMaisRecentes = async (req, res) => {
   }
 };
 
+const MostrarTodasObrasAleatorio = async (req, res) => {
+  try {
+    const obras = await pool.query(`
+      SELECT 
+      sub.id_obra, sub.titulo, sub.data_publi, sub.resumo, sub.usuario, 
+      string_agg(DISTINCT sub.link, ', ') as links, 
+      string_agg(DISTINCT sub.img, ', ') as imgs, 
+      string_agg(DISTINCT sub.assunto, ', ') as assuntos, 
+      string_agg(DISTINCT sub.autor, ', ') as autores
+  FROM (
+      SELECT 
+          o.id_obra, o.titulo, o.data_publi, o.resumo, u.nome as usuario, 
+          li.link, im.link as img, ass.nome as assunto, au.nome as autor
+      FROM obra o
+      INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+      INNER JOIN autor au ON au.id_autor = oa.id_autor
+      INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+      INNER JOIN obras_assuntos oas ON oas.id_obra = o.id_obra
+      INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+      INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+      INNER JOIN link li ON li.id_link = ol.id_link
+      INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+      INNER JOIN img im ON im.id_img = oi.id_img
+  ) sub
+  GROUP BY sub.id_obra, sub.titulo, sub.data_publi, sub.resumo, sub.usuario
+  ORDER BY RANDOM();
+
+      `);
+
+    console.log(obras);
+    if (obras.rows.length === 0) {
+      res
+        .status(200)
+        .json({ Mensagem: "Não há obra cadastrados.", status: 400 });
+    }
+
+    res.status(200).json(obras.rows);
+  } catch (erro) {
+    res.status(500).json({ Mensagem: erro.Mensagem });
+  }
+}
+
 const ObrasMaisAntigas = async (req, res) => {
   try {
     const obras = await pool.query(`
@@ -1024,6 +1066,7 @@ export {
   MostrarObraPeloID,
   MostrarPeloNomeAutor,
   MostrarPeloNomeObra,
+  MostrarTodasObrasAleatorio,
   MostrarPeloNomeUsuario,
   MostrarTodasObrasPorAssunto,
   MostrarTodasobra,
@@ -1036,5 +1079,5 @@ export {
   ObrasMaisAntigas,
   CadastrarObra,
   ExcluirObra,
-  EditarObra
+  EditarObra,
 };

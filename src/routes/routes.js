@@ -5,6 +5,7 @@ import {
   MostrarPeloNomeObra,
   MostrarPeloNomeUsuario,
   MostrarTodasObrasPorAssunto,
+  MostrarTodasObrasAleatorio,
   MostrarTodasobra,
   MostrarTodasobraCapistrano,
   MostrarTodasobraOutrosAutores,
@@ -55,17 +56,13 @@ import {
 import {
   MostrarLinkID,
   MostrarTodoslinks,
-  CadastrarLink,
-  ExcluirLink,
-  EditarLink,
+  CadastrarLink
 } from "../controllers/controllersLink.js";
 
 import {
   MostrarImgID,
   MostrarTodosimg,
-  CadastrarImagem,
-  ExcluirImg,
-  EditarImg,
+  CadastrarImagem
 } from "../controllers/controllersImg.js";
 
 const route = Router();
@@ -75,6 +72,7 @@ route.get("/mostrar_todas_obras", MostrarTodasobra);
 route.get("/mostrar_todas_capistrano", MostrarTodasobraCapistrano);
 route.get("/mostrar_outras_obras", MostrarTodasobraOutrosAutores);
 route.get("/mostrar_obraid/:id", MostrarObraPeloID);
+route.get("/mostrar_obras_aleatorio", MostrarTodasObrasAleatorio)
 route.get("/mostrar_obras_recentes", ObrasMaisRecentes);
 route.get("/mostrar_ordem_alfabetica", ObrasOrdemAlfabetica);
 route.get("/mostrar_obras_antigas", ObrasMaisAntigas);
@@ -106,7 +104,7 @@ route.get("/mostrar_autores_dos_usuarios", AutorCadaUsuario);
 route.post("/cadastro_usuarios", CadastrarUsuario);
 route.post("/login", Login);
 
-route.delete("excluir_usuario/:id", removeUsuarioID);
+route.delete("/excluir_usuario/:id", removeUsuarioID);
 
 // token
 route.post("validar_token", validarToken);

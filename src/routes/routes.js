@@ -5,9 +5,9 @@ import {
   MostrarPeloNomeObra,
   MostrarPeloNomeUsuario,
   MostrarTodasObrasPorAssunto,
-  MostrarTodasObrasAleatorio,
   MostrarTodasobra,
   MostrarTodasobraCapistrano,
+  MostrarTodasobraOutrosAutores,
   MostrarTodasobraOutrosAutores,
   ObrasOrdemAlfabetica,
   MostrarObraPeloIDUsuario,
@@ -56,13 +56,17 @@ import {
 import {
   MostrarLinkID,
   MostrarTodoslinks,
-  CadastrarLink
+  CadastrarLink,
+  ExcluirLink,
+  EditarLink,
 } from "../controllers/controllersLink.js";
 
 import {
   MostrarImgID,
   MostrarTodosimg,
-  CadastrarImagem
+  CadastrarImagem,
+  ExcluirImg,
+  EditarImg,
 } from "../controllers/controllersImg.js";
 
 const route = Router();

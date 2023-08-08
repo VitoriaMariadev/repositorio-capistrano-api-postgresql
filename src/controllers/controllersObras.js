@@ -42,6 +42,55 @@ ORDER BY o.id_obra;
   }
 };
 
+const MostrarObrasComNomeEIdUsuario = async (req, res) => {
+  const { titulo, id_usuario } = req.body;
+
+  try {
+    const obra = await pool.query(`
+    SELECT 
+    o.id_obra, o.titulo, o.data_publi, o.resumo, u.nome as usuario, 
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT li.link), ', ') as links, 
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT im.link), ', ') as imgs,
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT ass.nome), ', ') as assuntos, 
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT au.nome), ', ') as autores
+FROM 
+    obra o
+INNER JOIN 
+    obras_autores oa ON o.id_obra = oa.id_obra
+INNER JOIN 
+    autor au ON au.id_autor = oa.id_autor
+INNER JOIN 
+    usuario u ON u.id_usuario = o.id_usuario
+INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+INNER JOIN link li ON li.id_link = ol.id_link
+INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+INNER JOIN img im ON im.id_img = oi.id_img
+WHERE 
+    o.titulo ILIKE '%' || '${titulo}' || '%'
+    and o.id_usuario = ${id_usuario}
+GROUP BY 
+    o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi
+ORDER BY 
+    o.id_obra;
+
+    `);
+
+    if (obra.rows.length === 0) {
+      return res
+        .status(200)
+        .json({ mensagem: "Obra(s) não encontrado(s)", status: 400 });
+    }
+
+    return res.status(200).json(obra.rows);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ mensagem: "Ocorreu um erro interno no servidor" });
+  }
+}
+
 const MostrarObraPeloID = async (req, res) => {
   const { id } = req.params;
   try {
@@ -1075,6 +1124,7 @@ export {
   ObrasOrdemAlfabetica,
   MostrarObraPeloIDUsuario,
   MostrarObrasPeloIDAutor,
+  MostrarObrasComNomeEIdUsuario,
   ObrasMaisRecentes,
   ObrasMaisAntigas,
   CadastrarObra,

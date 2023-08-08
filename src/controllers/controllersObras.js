@@ -65,7 +65,7 @@ const MostrarObrasComNomeEIdUsuario = async (req, res) => {
         INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
         INNER JOIN img im ON im.id_img = oi.id_img
       WHERE 
-        o.titulo ILIKE '%' || '$1' || '%'
+        o.titulo ILIKE '%' || $1 || '%'
         AND o.id_usuario = $2
       GROUP BY 
         o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi

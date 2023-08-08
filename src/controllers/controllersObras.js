@@ -908,7 +908,7 @@ const ExcluirObra = async (req, res) => {
 
 const EditarObra = async (req, res) => {
   try {
-    const { titulo, id_obra, link, usuario, resumo, descricao, img, data } =
+    const { titulo, id_obra, link, usuario, resumo, descricao, img, data, autor, assunto } =
       req.body;
 
     if (
@@ -995,6 +995,7 @@ const EditarObra = async (req, res) => {
           "SELECT id_autor FROM autor WHERE nome = $1",
           [AutorFormatado]
         );
+
 
         if (verificaAutor.rows.length > 0) {
           const autor_id = verificaAutor.rows[0].id_autor;

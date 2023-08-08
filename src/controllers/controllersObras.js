@@ -71,7 +71,7 @@ const MostrarObrasComNomeEIdUsuario = async (req, res) => {
         o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi
       ORDER BY 
         o.id_obra;
-    `, [`%${titulo}%`, id_usuario]);
+    `, [`${titulo}`, id_usuario]);
 
     if (obra.rows.length === 0) {
       return res

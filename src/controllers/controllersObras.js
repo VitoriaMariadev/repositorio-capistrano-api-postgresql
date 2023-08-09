@@ -908,17 +908,18 @@ const ExcluirObra = async (req, res) => {
 
 const EditarObra = async (req, res) => {
   try {
-    const { titulo, id_obra, link, usuario, resumo, descricao, img, data, autor, assunto } =
+    const { titulo, id_obra, link, resumo, descricao, img, data, autor, assunto } =
       req.body;
 
     if (
       !titulo &&
       !link &&
-      !usuario &&
       !resumo &&
       !descricao &&
       !img &&
-      !data
+      !data &&
+      !autor && 
+      !assunto
     ) {
       return res
         .status(400)
@@ -929,20 +930,6 @@ const EditarObra = async (req, res) => {
     const resumoFormatado = capitalizarEPontuar(resumo);
     const descricaoFormatada = descricao.trim();
     const dataFormatada = data ? data.trim() : undefined;
-
-    let usuario_id;
-    const list_usuario_id = [];
-
-    for (let i = 0; i < usuario.length; i++) {
-      const usuario_nome = usuario[i];
-      const usuarioFormatado = primeiraLetraMaiuscula(usuario_nome);
-      const verificaUsuario = await pool.query(
-        "SELECT id_usuario FROM usuario WHERE nome = $1",
-        [usuarioFormatado]
-      );
-      usuario_id = verificaUsuario.rows[0].id_usuario;
-      list_usuario_id.push(usuario_id);
-    }
 
     // Atualiza os campos da tabela obra
     if (TituloFormatado) {
@@ -973,14 +960,6 @@ const EditarObra = async (req, res) => {
       ]);
     }
 
-    // Atualiza os campos que são listas
-    if (usuario) {
-      // Atualiza o usuario_id na tabela obra
-      await pool.query("UPDATE obra SET id_usuario = $1 WHERE id_obra = $2", [
-        usuario_id,
-        id_obra,
-      ]);
-    }
 
     if (autor) {
       // Remove todos os autores existentes para a obra

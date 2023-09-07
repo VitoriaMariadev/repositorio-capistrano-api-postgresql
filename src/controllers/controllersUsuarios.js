@@ -9,7 +9,7 @@ import {
 // funções para mostrar (get)
 const MostrarTodosUsuarios = async (req, res) => {
   try {
-    const usuarios = await pool.query("SELECT * FROM usuario");
+    const usuarios = await pool.query("SELECT nome FROM usuario");
 
     if (usuarios.rows.length === 0) {
       return res
@@ -145,13 +145,11 @@ const Login = async (req, res) => {
 
     const novoUsuario = primeiraLetraMaiuscula(nome);
     const novaSenha = senha.trim();
-    
+
     const verificaUsuario = await pool.query(
       "SELECT * FROM usuario WHERE nome = $1",
       [novoUsuario]
     );
-
-    console.log(verificaUsuario, 'verificou usuario')
     const senhaValida = bcrypt.compareSync(
       novaSenha,
       verificaUsuario.rows[0].senha
@@ -179,7 +177,6 @@ const Login = async (req, res) => {
         where a.id_usuario = $1`,
       [usuarioId]
     );
-
     if (verificaUsuarioAdm.rows.length > 0) {
       res.cookie("token", token, { httpOnly: true });
       res
@@ -189,16 +186,13 @@ const Login = async (req, res) => {
           usuarioId,
           novoUsuario,
           usuarioSenha,
-          tipoUsuario: "admin",
+          tipoUsuario: admin,
         });
     }
-
-
     res.cookie("token", token, { httpOnly: true });
     res
       .status(200)
-      .json({ token, usuarioId, novoUsuario, usuarioSenha, tipoUsuario: "user" });
-
+      .json({ token, usuarioId, novoUsuario, usuarioSenha, tipoUsuario: user });
   } catch (erro) {
     return res.status(500).json({ Mensagem: erro.Mensagem });
   }

@@ -3,7 +3,7 @@ const { Pool } = pg;
 
 const pool = new Pool({
   connectionString:
-  "postgres://default:bhGF1mnk2jAg@ep-floral-rain-91788934.us-east-1.postgres.vercel-storage.com:5432/verceldb",
+  "postgres://default:1nXJPu7fHoBO@ep-divine-breeze-84064744.us-east-1.postgres.vercel-storage.com:5432/verceldb",
   ssl: {
     rejectUnauthorized: false,
     sslmode: "require",
@@ -41,7 +41,8 @@ const createTables = async () => {
       titulo VARCHAR(255),
       resumo TEXT,
       descricao TEXT,
-      data_publi VARCHAR(255)
+      data_publi VARCHAR(255),
+      data_criacao VARCHAR(255)
     );
     
     CREATE TABLE IF NOT EXISTS obras_links (
@@ -66,6 +67,23 @@ const createTables = async () => {
       nome VARCHAR(255)
     );
     
+    CREATE TABLE IF NOT EXISTS homenagem (
+      id_homenagem SERIAL PRIMARY KEY,
+      nome VARCHAR(255),
+      data_criacao VARCHAR(255)
+    );
+
+    CREATE TABLE IF NOT EXISTS instituicao (
+      id_instituicao SERIAL PRIMARY KEY,
+      nome VARCHAR(255)
+    );
+
+    CREATE TABLE IF NOT EXISTS homenagem_instituicao (
+      id_homenagem SERIAL REFERENCES homenagem(id_homenagem),
+      id_instituicao SERIAL REFERENCES instituicao(id_instituicao),
+      PRIMARY KEY (id_homenagem, id_instituicao)
+    );
+
     CREATE TABLE IF NOT EXISTS obras_assuntos (
       id_assunto SERIAL REFERENCES assunto(id_assunto),
       id_obra SERIAL REFERENCES obra(id_obra),

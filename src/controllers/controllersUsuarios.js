@@ -170,6 +170,8 @@ const Login = async (req, res) => {
       { expiresIn: 86400 }
     );
 
+    console.log('passei no token')
+
     const verificaUsuarioAdm = await pool.query(
       `SELECT u.id_usuario, u.nome 
         FROM usuario u 
@@ -177,6 +179,7 @@ const Login = async (req, res) => {
         where a.id_usuario = $1`,
       [usuarioId]
     );
+
     if (verificaUsuarioAdm.rows.length > 0) {
       res.cookie("token", token, { httpOnly: true });
       res
@@ -189,12 +192,16 @@ const Login = async (req, res) => {
           tipoUsuario: admin,
         });
     }
+
     res.cookie("token", token, { httpOnly: true });
+
     res
       .status(200)
-      .json({ token, usuarioId, novoUsuario, usuarioSenha, tipoUsuario: user });
+      .json({ token, usuarioId, novoUsuario, usuarioSenha, tipoUsuario: "user" });
+
   } catch (erro) {
-    return res.status(500).json({ Mensagem: erro.Mensagem });
+      return res.status(500).json({ Mensagem: erro.Mensagem });
+    
   }
 };
 

@@ -69,7 +69,7 @@ WHERE
     o.titulo ILIKE '%' || '${titulo}' || '%'
     and o.id_usuario = ${id_usuario}
 GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_publi, ass.nome, li.link, im.link, o.data_criacao, au.nome
+    o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi, ass.nome, li.link, im.link, o.data_criacao, au.nome
 ORDER BY 
     o.id_obra;
     `);
@@ -138,8 +138,7 @@ const MostrarObraPeloID = async (req, res) => {
     string_agg(DISTINCT im.link, ', ') as imgs,
     string_agg(DISTINCT ass.nome, ', ') as assuntos,
     string_agg(DISTINCT au.nome, ', ') as autores,
-    o.descricao,
-    o.link
+    o.descricao
 FROM 
     obra o
 INNER JOIN 
@@ -161,8 +160,6 @@ GROUP BY
     o.resumo,
     u.nome,
     o.descricao,
-    o.link,
-    o.img, 
     o.data_publi, 
     o.data_criacao,
     ass.nome, li.link, im.link,
@@ -202,7 +199,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
         INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
         INNER JOIN img im ON im.id_img = oi.id_img
         where assunto = $1
-        GROUP BY o.id_obra, u.nome, o.titulo, o.resumo, o.img, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+        GROUP BY o.id_obra, u.nome, o.titulo, o.resumo, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
         ORDER BY o.id_obra
         `,
       [assunto]
@@ -215,7 +212,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
 
 const ObrasOrdemAlfabetica = async (req, res) => {
   try {
-    obras = await pool.query(`
+    const obras = await pool.query(`
       SELECT 
           o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
           string_agg(DISTINCT li.link, ', ') as links, 
@@ -239,7 +236,7 @@ const ObrasOrdemAlfabetica = async (req, res) => {
           o.data_publi IS NOT NULL
 
       GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
       ORDER BY 
           o.titulo;
     `);
@@ -280,7 +277,7 @@ const ObrasMaisRecentes = async (req, res) => {
         INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
         INNER JOIN img im ON im.id_img = oi.id_img
     GROUP BY 
-        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.img, o.data_publi, ass.nome, li.link, im.link, au.nome
+        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
     ORDER BY 
         o.data_publi DESC;
   `);
@@ -323,7 +320,7 @@ const ObrasCriadasMaisAntigas = async (req, res) => {
       WHERE 
           o.data_criacao IS NOT NULL
       GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
       ORDER BY 
         o.data_criacao ASC;
     `);
@@ -364,7 +361,7 @@ const ObrasCriadasMaisRecentes = async (req, res) => {
         INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
         INNER JOIN img im ON im.id_img = oi.id_img
     GROUP BY 
-        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.img, o.data_publi, ass.nome, li.link, im.link, au.nome
+        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
     ORDER BY 
         o.data_criacao DESC;
   `);
@@ -407,7 +404,7 @@ const ObrasMaisAntigas = async (req, res) => {
       WHERE 
           o.data_publi IS NOT NULL
       GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
       ORDER BY 
           o.data_publi ASC;
     `);
@@ -452,7 +449,7 @@ INNER JOIN
 WHERE 
     o.titulo ILIKE '%' || '${titulo}' || '%'
 GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
 ORDER BY 
     o.id_obra;
     `);
@@ -493,7 +490,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
         INNER JOIN img im ON im.id_img = oi.id_img
         where au.nome ILIKE '%' || '${nome}' || '%'
         
-        group by o.id_obra, au.nome, o.titulo, o.resumo, o.data_criacao, u.nome, o.img, o.data_publi, ass.nome, li.link, im.link
+        group by o.id_obra, au.nome, o.titulo, o.resumo, o.data_criacao, u.nome, o.data_publi, ass.nome, li.link, im.link
         
         order by o.id_obra
     `);
@@ -535,7 +532,7 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
         INNER JOIN img im ON im.id_img = oi.id_img
         where au.id_autor = $1
         
-        group by o.id_obra, au.nome, o.titulo, o.resumo, o.data_criacao, u.nome, o.img, o.data_publi, ass.nome, li.link, im.link
+        group by o.id_obra, au.nome, o.titulo, o.resumo, o.data_criacao, u.nome, o.data_publi, ass.nome, li.link, im.link
         
         order by o.id_obra
     `,
@@ -583,7 +580,7 @@ INNER JOIN
 WHERE 
     u.nome ILIKE '%' || '${nome}' || '%'
 GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.img, o.data_criacao, o.data_publi, as.nome, li.link, im.link, au.nome
+    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, as.nome, li.link, im.link, au.nome
 ORDER BY 
     o.id_obra;
     `);
@@ -629,7 +626,7 @@ INNER JOIN
 WHERE 
     u.id_usuario = $1
 GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.img, o.data_publi, as.nome, li.link, im.link, au.nome
+    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, as.nome, li.link, im.link, au.nome
 ORDER BY 
     o.id_obra;
     `,

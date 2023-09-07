@@ -9,7 +9,7 @@ const MostrarTodasobra = async (req, res) => {
   try {
     const obra = await pool.query(`
     SELECT 
-    o.id_obra, o.titulo, o.data_publi, o.data_criacao o.resumo, u.nome as usuario, 
+    o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
     string_agg(DISTINCT li.link, ', ') as links, 
     string_agg(DISTINCT im.link, ', ') as imgs, 
     string_agg(DISTINCT ass.nome, ', ') as assuntos, 

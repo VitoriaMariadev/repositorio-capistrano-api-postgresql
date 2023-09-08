@@ -604,31 +604,33 @@ const MostrarObraPeloIDUsuario = async (req, res) => {
   try {
     const obra = await pool.query(
       `
-    SELECT 
-    o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
-    string_agg(DISTINCT li.link, ', ') as links, 
-    string_agg(DISTINCT im.link, ', ') as imgs,
-    string_agg(DISTINCT as.nome, ', ') ass assuntos, string_agg(au.nome, ', ') as autores
-FROM 
-    obra o
-INNER JOIN 
-    obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN 
-    autor au ON au.id_autor = oa.id_autor
-INNER JOIN 
-    usuario u ON u.id_usuario = o.id_usuario
-    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-WHERE 
-    u.id_usuario = $1
-GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, as.nome, li.link, im.link, au.nome
-ORDER BY 
-    o.id_obra;
+      SELECT 
+      o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
+      string_agg(DISTINCT li.link, ', ') as links, 
+      string_agg(DISTINCT im.link, ', ') as imgs,
+      string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+      string_agg(DISTINCT au.nome, ', ') as autores
+  FROM 
+      obra o
+  INNER JOIN 
+      obras_autores oa ON o.id_obra = oa.id_obra
+  INNER JOIN 
+      autor au ON au.id_autor = oa.id_autor
+  INNER JOIN 
+      usuario u ON u.id_usuario = o.id_usuario
+  INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+  INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+  INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+  INNER JOIN link li ON li.id_link = ol.id_link
+  INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+  INNER JOIN img im ON im.id_img = oi.id_img
+  WHERE 
+      u.id_usuario = $1
+  GROUP BY 
+      o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi
+  ORDER BY 
+      o.id_obra;
+  
     `,
       [id_usuario]
     );

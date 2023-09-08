@@ -954,7 +954,7 @@ const EditarObra = async (req, res) => {
       descricao,
       img,
       data,
-      data_criacao,
+      data_criacao
     } = req.body;
 
     if (
@@ -1020,7 +1020,7 @@ const EditarObra = async (req, res) => {
     if (usuario) {
       // Atualiza o usuario_id na tabela obra
       await pool.query("UPDATE obra SET id_usuario = $1 WHERE id_obra = $2", [
-        usuario_id,
+        usuario,
         id_obra,
       ]);
     }

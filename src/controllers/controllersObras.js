@@ -923,13 +923,13 @@ const ExcluirObra = async (req, res) => {
     }
 
     // excluindo relacionamento obra
-    await pool.query(`DELETE FROM obra_autores WHERE id_obra = ${id_obra}`);
+    await pool.query(`DELETE FROM obras_autores WHERE id_obra = ${id_obra}`);
 
-    await pool.query(`DELETE FROM obra_links WHERE id_obra = ${id_obra}`);
+    await pool.query(`DELETE FROM obras_links WHERE id_obra = ${id_obra}`);
 
-    await pool.query(`DELETE FROM obra_imgs WHERE id_obra = ${id_obra}`);
+    await pool.query(`DELETE FROM obras_imgs WHERE id_obra = ${id_obra}`);
 
-    await pool.query(`DELETE FROM obra_assuntos WHERE id_obra = ${id_obra}`);
+    await pool.query(`DELETE FROM obras_assuntos WHERE id_obra = ${id_obra}`);
 
     await pool.query(`DELETE FROM obra WHERE id_obra = ${id_obra}`);
 

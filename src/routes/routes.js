@@ -107,15 +107,15 @@ route.post("/pesquisar_nome_obra", MostrarPeloNomeObra);
 route.post("/pesquisar_nome_autor", MostrarPeloNomeAutor);
 route.post("/pesquisar_nome_usuario", MostrarPeloNomeUsuario);
 route.post("/mostrar_todas_obras_assunto", MostrarTodasObrasPorAssunto);
-route.get("/mostrar_obras_id_autor", MostrarObrasPeloIDAutor);
-route.get("/mostrar_obras_id_usuario", MostrarObraPeloIDUsuario);
+route.get("/mostrar_obras_id_autor/:id_autor", MostrarObrasPeloIDAutor);
+route.get("/mostrar_obras_id_usuario/:id_usuario", MostrarObraPeloIDUsuario);
 route.get(
   "/mostrar_obras_com_nome_e_id_usuario",
   MostrarObrasComNomeEIdUsuario
 );
 route.post("/cadastro_obras", CadastrarObra);
 
-route.delete("/excluir_obra/:id", ExcluirObra);
+route.delete("/excluir_obra/:id_obra", ExcluirObra);
 
 route.patch("/editar_obra", EditarObra);
 

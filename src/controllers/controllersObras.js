@@ -1010,7 +1010,7 @@ const EditarObra = async (req, res) => {
     }
 
     if (dataCricaoFormata) {
-      await pool.query("Updata obra SET data_criacao = $1 WHERE id_obra = $2", [
+      await pool.query("Update obra SET data_criacao = $1 WHERE id_obra = $2", [
         dataCricaoFormata,
         id_obra,
       ]);
@@ -1021,7 +1021,7 @@ const EditarObra = async (req, res) => {
       // Atualiza o usuario_id na tabela obra
       await pool.query("UPDATE obra SET id_usuario = $1 WHERE id_obra = $2", [
         usuario,
-        id_obra,
+        id_obra
       ]);
     }
 
@@ -1030,6 +1030,8 @@ const EditarObra = async (req, res) => {
       await pool.query("DELETE FROM obras_autores WHERE id_obra = $1", [
         id_obra,
       ]);
+
+      console.log('editou o autor')
 
       // Insere os novos assuntos para a obra
       for (const autor_nome of autor) {

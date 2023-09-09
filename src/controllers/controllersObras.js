@@ -8,24 +8,28 @@ import {
 const MostrarTodasobra = async (req, res) => {
   try {
     const obra = await pool.query(`
-    SELECT 
-    o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
-    string_agg(DISTINCT li.link, ', ') as links, 
-    string_agg(DISTINCT im.link, ', ') as imgs, 
-    string_agg(DISTINCT ass.nome, ', ') as assuntos, 
-    string_agg(DISTINCT au.nome, ', ') as autores
-FROM obra o
-INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN autor au ON au.id_autor = oa.id_autor
-INNER JOIN usuario u ON u.id_usuario = o.id_usuario
-INNER JOIN obras_assuntos oas ON oas.id_obra = o.id_obra
-INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-INNER JOIN link li ON li.id_link = ol.id_link
-INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-INNER JOIN img im ON im.id_img = oi.id_img
-GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.data_criacao, o.resumo, ass.nome, li.link, im.link, au.nome
-ORDER BY o.id_obra;
+        SELECT DISTINCT
+        o.id_obra, 
+        o.titulo, 
+        o.data_publi, 
+        o.data_criacao, 
+        o.resumo, 
+        u.nome as usuario, 
+        string_agg(DISTINCT li.link, ', ') as links, 
+        string_agg(DISTINCT im.link, ', ') as imgs, 
+        string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+        string_agg(DISTINCT au.nome, ', ') as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON oas.id_obra = o.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.data_criacao, o.resumo;
       `);
 
     console.log(obra);
@@ -46,32 +50,34 @@ const MostrarObrasComNomeEIdUsuario = async (req, res) => {
 
   try {
     const obra = await pool.query(`
-    SELECT 
-    o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
-    string_agg(DISTINCT li.link, ', ') as links, 
-    string_agg(DISTINCT im.link, ', ') as imgs,
-    string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-FROM 
-    obra o
-INNER JOIN 
-    obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN 
-    autor au ON au.id_autor = oa.id_autor
-INNER JOIN 
-    usuario u ON u.id_usuario = o.id_usuario
+        SELECT 
+        o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
+        string_agg(DISTINCT li.link, ', ') as links, 
+        string_agg(DISTINCT im.link, ', ') as imgs,
+        string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+        string_agg(DISTINCT au.nome, ', ') as autores
+    FROM 
+        obra o
+    INNER JOIN 
+        obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN 
+        autor au ON au.id_autor = oa.id_autor
+    INNER JOIN 
+        usuario u ON u.id_usuario = o.id_usuario
     INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
     INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
     INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-WHERE 
-    o.titulo ILIKE '%' || '${titulo}' || '%'
-    and o.id_usuario = ${id_usuario}
-GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi, ass.nome, li.link, im.link, o.data_criacao, au.nome
-ORDER BY 
-    o.id_obra;
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE 
+        o.titulo ILIKE '%' || '${titulo}' || '%'
+        AND o.id_usuario = ${id_usuario}
+    GROUP BY 
+        o.id_obra, o.titulo, o.resumo, u.nome, o.data_publi, ass.nome, li.link, im.link, o.data_criacao, au.nome
+    ORDER BY 
+        o.id_obra;
+
     `);
 
     if (obra.rows.length === 0) {
@@ -91,24 +97,38 @@ ORDER BY
 const MostrarTodasObrasAleatorio = async (req, res) => {
   try {
     const obras = await pool.query(`
-    SELECT 
-    o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
-    string_agg(DISTINCT li.link, ', ') as links, 
-    string_agg(DISTINCT im.link, ', ') as imgs, 
-    string_agg(DISTINCT ass.nome, ', ') as assuntos, 
-    string_agg(DISTINCT au.nome, ', ') as autores
-FROM obra o
-INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN autor au ON au.id_autor = oa.id_autor
-INNER JOIN usuario u ON u.id_usuario = o.id_usuario
-INNER JOIN obras_assuntos oas ON oas.id_obra = o.id_obra
-INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-INNER JOIN link li ON li.id_link = ol.id_link
-INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-INNER JOIN img im ON im.id_img = oi.id_img
-GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.resumo, ass.nome, o.data_criacao, li.link, im.link, au.nome
-ORDER BY RANDOM()
+    SELECT  
+    sub.id_obra, sub.titulo, sub.data_publi, sub.data_criacao, sub.resumo, sub.usuario, 
+    string_agg(sub.links, ', ') as links, 
+    string_agg(sub.imgs, ', ') as imgs, 
+    string_agg(sub.assuntos, ', ') as assuntos, 
+    string_agg(sub.autores, ', ') as autores
+FROM (
+    SELECT DISTINCT
+        o.id_obra, 
+        o.titulo, 
+        o.data_publi, 
+        o.data_criacao, 
+        o.resumo, 
+        u.nome as usuario, 
+        li.link as links, 
+        im.link as imgs, 
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON oas.id_obra = o.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+) as sub
+GROUP BY sub.id_obra, sub.usuario, sub.titulo, sub.data_publi, sub.resumo, sub.data_criacao
+ORDER BY RANDOM();
+
       `);
 
     console.log(obras);
@@ -182,23 +202,30 @@ const MostrarTodasObrasPorAssunto = async (req, res) => {
 
     const obras = await pool.query(
       `
-    SELECT 
-          o.id_obra, o.titulo, o.data_publi, o.data_criacao, o.resumo, u.nome as usuario, 
-          string_agg(DISTINCT li.link, ', ') as links, string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(DISTINCT au.nome, ', ') as autores
-        FROM obra o
-        INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
-        INNER JOIN autor au ON au.id_autor = oa.id_autor
-        INNER JOIN usuario u ON u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-        INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-        where assunto = $1
-        GROUP BY o.id_obra, u.nome, o.titulo, o.resumo, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-        ORDER BY o.id_obra
+        SELECT DISTINCT
+        o.id_obra, 
+        o.titulo, 
+        o.data_publi, 
+        o.data_criacao, 
+        o.resumo, 
+        u.nome as usuario, 
+        string_agg(DISTINCT li.link, ', ') as links, 
+        string_agg(DISTINCT im.link, ', ') as imgs, 
+        string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+        string_agg(DISTINCT au.nome, ', ') as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE ass.id_assunto = $1
+    GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.data_criacao, o.resumo;
+    
         `,
       [assunto]
     );
@@ -211,32 +238,31 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
 const ObrasOrdemAlfabetica = async (req, res) => {
   try {
     const obras = await pool.query(`
-      SELECT 
-          o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
-          string_agg(DISTINCT li.link, ', ') as links, 
-          string_agg(DISTINCT im.link, ', ') as imgs,
-          string_agg(DISTINCT ass.nome, ', ') as assuntos,string_agg(au.nome, ', ') as autores
-      FROM 
-          obra o
-      INNER JOIN 
-          obras_autores oa ON o.id_obra = oa.id_obra
-      INNER JOIN 
-          autor au ON au.id_autor = oa.id_autor
-      INNER JOIN 
-          usuario u ON u.id_usuario = o.id_usuario
-          INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-          INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-          INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-          INNER JOIN link li ON li.id_link = ol.id_link
-          INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-          INNER JOIN img im ON im.id_img = oi.id_img
-      WHERE 
-          o.data_publi IS NOT NULL
+        SELECT DISTINCT ON (o.id_obra)
+        o.id_obra, 
+        o.titulo, 
+        o.data_criacao, 
+        o.data_publi, 
+        o.resumo, 
+        u.nome as usuario, 
+        string_agg(DISTINCT li.link, ', ') as links, 
+        string_agg(DISTINCT im.link, ', ') as imgs,
+        string_agg(DISTINCT ass.nome, ', ') as assuntos,
+        string_agg(DISTINCT au.nome, ', ') as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE o.data_publi IS NOT NULL
+    GROUP BY o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, au.nome
+    ORDER BY o.id_obra, o.titulo;
 
-      GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-      ORDER BY 
-          o.titulo;
     `);
     if (obras.rows.length === 0) {
       return res
@@ -256,28 +282,36 @@ const ObrasMaisRecentes = async (req, res) => {
   try {
     const obras = await pool.query(`
     SELECT 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario, 
+    string_agg(DISTINCT sub.links, ', ') as links, 
+    string_agg(DISTINCT sub.imgs, ', ') as imgs,
+    string_agg(DISTINCT sub.assuntos, ', ') as assuntos, 
+    string_agg(DISTINCT sub.autores, ', ') as autores
+FROM (
+    SELECT 
         o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
-        string_agg(DISTINCT li.link, ', ') as links, 
-        string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-    FROM 
-        obra o
-    INNER JOIN 
-        obras_autores oa ON o.id_obra = oa.id_obra
-    INNER JOIN 
-        autor au ON au.id_autor = oa.id_autor
-    INNER JOIN 
-        usuario u ON u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-        INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-        INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
+        li.link as links, 
+        im.link as imgs,
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
     GROUP BY 
-        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-    ORDER BY 
-        o.data_publi DESC;
+        o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome, li.link, im.link, ass.nome, au.nome
+) as sub
+GROUP BY 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario
+ORDER BY 
+    sub.data_publi DESC;
+
   `);
     if (obras.rows.length === 0) {
       return res
@@ -296,31 +330,52 @@ const ObrasMaisRecentes = async (req, res) => {
 const ObrasCriadasMaisAntigas = async (req, res) => {
   try {
     const obras = await pool.query(`
-      SELECT 
-          o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario,
-          string_agg(DISTINCT li.link, ', ') as links, 
-          string_agg(DISTINCT im.link, ', ') as imgs, 
-          string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-      FROM 
-          obra o
-      INNER JOIN 
-          obras_autores oa ON o.id_obra = oa.id_obra
-      INNER JOIN 
-          autor au ON au.id_autor = oa.id_autor
-      INNER JOIN 
-          usuario u ON u.id_usuario = o.id_usuario
-          INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-          INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-          INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-      WHERE 
-          o.data_criacao IS NOT NULL
-      GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-      ORDER BY 
-        o.data_criacao ASC;
+    SELECT 
+    id_obra, 
+    titulo, 
+    data_criacao, 
+    data_publi, 
+    resumo, 
+    usuario,
+    links, 
+    imgs, 
+    assuntos, 
+    autores
+FROM (
+    SELECT 
+        o.id_obra, 
+        o.titulo, 
+        o.data_criacao, 
+        o.data_publi, 
+        o.resumo, 
+        u.nome as usuario,
+        string_agg(DISTINCT li.link, ', ') as links, 
+        string_agg(DISTINCT im.link, ', ') as imgs, 
+        string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+        string_agg(DISTINCT au.nome, ', ') as autores,
+        ROW_NUMBER() OVER (PARTITION BY o.id_obra ORDER BY o.data_criacao ASC) AS rn
+    FROM 
+        obra o
+    INNER JOIN 
+        obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN 
+        autor au ON au.id_autor = oa.id_autor
+    INNER JOIN 
+        usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE 
+        o.data_criacao IS NOT NULL
+    GROUP BY 
+        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi
+) AS ranked
+WHERE rn = 1
+ORDER BY data_criacao ASC;
+
     `);
     if (obras.rows.length === 0) {
       return res
@@ -340,28 +395,36 @@ const ObrasCriadasMaisRecentes = async (req, res) => {
   try {
     const obras = await pool.query(`
     SELECT 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario, 
+    string_agg(DISTINCT sub.links, ', ') as links, 
+    string_agg(DISTINCT sub.imgs, ', ') as imgs, 
+    string_agg(DISTINCT sub.assuntos, ', ') as assuntos, 
+    string_agg(DISTINCT sub.autores, ', ') as autores
+FROM (
+    SELECT 
         o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
-        string_agg(DISTINCT li.link, ', ') as links, 
-        string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-    FROM 
-        obra o
-    INNER JOIN 
-        obras_autores oa ON o.id_obra = oa.id_obra
-    INNER JOIN 
-        autor au ON au.id_autor = oa.id_autor
-    INNER JOIN 
-        usuario u ON u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-        INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-        INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
+        li.link as links, 
+        im.link as imgs,
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
     GROUP BY 
-        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-    ORDER BY 
-        o.data_criacao DESC;
+        o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome, li.link, im.link, ass.nome, au.nome
+) as sub
+GROUP BY 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario
+ORDER BY 
+    sub.data_criacao DESC;
+
   `);
     if (obras.rows.length === 0) {
       return res
@@ -380,31 +443,38 @@ const ObrasCriadasMaisRecentes = async (req, res) => {
 const ObrasMaisAntigas = async (req, res) => {
   try {
     const obras = await pool.query(`
-      SELECT 
-          o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario,
-          string_agg(DISTINCT li.link, ', ') as links, 
-          string_agg(DISTINCT im.link, ', ') as imgs, 
-          string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-      FROM 
-          obra o
-      INNER JOIN 
-          obras_autores oa ON o.id_obra = oa.id_obra
-      INNER JOIN 
-          autor au ON au.id_autor = oa.id_autor
-      INNER JOIN 
-          usuario u ON u.id_usuario = o.id_usuario
-          INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-          INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-          INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-      WHERE 
-          o.data_publi IS NOT NULL
-      GROUP BY 
-          o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
-      ORDER BY 
-          o.data_publi ASC;
+    SELECT 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario,
+    string_agg(DISTINCT sub.links, ', ') as links, 
+    string_agg(DISTINCT sub.imgs, ', ') as imgs, 
+    string_agg(DISTINCT sub.assuntos, ', ') as assuntos, 
+    string_agg(DISTINCT sub.autores, ', ') as autores
+FROM (
+    SELECT 
+        o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
+        li.link as links, 
+        im.link as imgs,
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE o.data_publi IS NOT NULL
+    GROUP BY 
+        o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome, li.link, im.link, ass.nome, au.nome
+) as sub
+GROUP BY 
+    sub.id_obra, sub.titulo, sub.data_criacao, sub.data_publi, sub.resumo, sub.usuario
+ORDER BY 
+    sub.data_publi ASC;
+
     `);
     if (obras.rows.length === 0) {
       return res
@@ -426,30 +496,63 @@ const MostrarPeloNomeObra = async (req, res) => {
   try {
     const obra = await pool.query(`
     SELECT 
-    o.id_obra, o.titulo, o.data_criacao, o.data_publi, o.resumo, u.nome as usuario, 
-    string_agg(DISTINCT li.link, ', ') as links, 
-    string_agg(DISTINCT im.link, ', ') as imgs,
-    string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(au.nome, ', ') as autores
-FROM 
-    obra o
-INNER JOIN 
-    obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN 
-    autor au ON au.id_autor = oa.id_autor
-INNER JOIN 
-    usuario u ON u.id_usuario = o.id_usuario
-    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-WHERE 
-    o.titulo ILIKE '%' || '${titulo}' || '%'
+    sub.id_obra, 
+    sub.titulo, 
+    sub.data_criacao, 
+    sub.data_publi, 
+    sub.resumo, 
+    sub.usuario, 
+    string_agg(DISTINCT sub.links, ', ') as links, 
+    string_agg(DISTINCT sub.imgs, ', ') as imgs,
+    string_agg(DISTINCT sub.assuntos, ', ') as assuntos, 
+    string_agg(DISTINCT sub.autores, ', ') as autores
+FROM (
+    SELECT 
+        o.id_obra, 
+        o.titulo, 
+        o.data_criacao, 
+        o.data_publi, 
+        o.resumo, 
+        u.nome as usuario, 
+        li.link as links, 
+        im.link as imgs,
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM 
+        obra o
+    INNER JOIN 
+        obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN 
+        autor au ON au.id_autor = oa.id_autor
+    INNER JOIN 
+        usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN 
+        obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN 
+        assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN 
+        obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN 
+        link li ON li.id_link = ol.id_link
+    INNER JOIN 
+        obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN 
+        img im ON im.id_img = oi.id_img
+    WHERE 
+        o.titulo ILIKE '%' || '${titulo}' || '%'
+    GROUP BY 
+        o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+) as sub
 GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, ass.nome, li.link, im.link, au.nome
+    sub.id_obra, 
+    sub.titulo, 
+    sub.data_criacao, 
+    sub.data_publi, 
+    sub.resumo, 
+    sub.usuario
 ORDER BY 
-    o.id_obra;
+    sub.id_obra;
+
     `);
 
     if (obra.rows.length === 0) {
@@ -472,25 +575,40 @@ const MostrarPeloNomeAutor = async (req, res) => {
   try {
     const obra = await pool.query(`
     SELECT 
-        o.id_obra, o.data_criacao, o.titulo, o.resumo, o.data_publi, u.nome as usuario, 
-        string_agg(DISTINCT li.link, ', ') as links, 
-        string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(DISTINCT au.nome, ', ') as autores
-        FROM obra o
-        inner join obras_autores oa on o.id_obra = oa.id_obra
-        inner join autor au on au.id_autor = oa.id_autor
-        inner join usuario u on u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-        INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-        where au.nome ILIKE '%' || '${nome}' || '%'
-        
-        group by o.id_obra, au.nome, o.titulo, o.resumo, o.data_criacao, u.nome, o.data_publi, ass.nome, li.link, im.link
-        
-        order by o.id_obra
+    sub.id_obra, sub.data_criacao, sub.titulo, sub.resumo, sub.data_publi, sub.usuario, 
+    string_agg(DISTINCT sub.links, ', ') as links, 
+    string_agg(DISTINCT sub.imgs, ', ') as imgs,
+    string_agg(DISTINCT sub.assuntos, ', ') as assuntos, 
+    string_agg(DISTINCT sub.autores, ', ') as autores
+FROM (
+    SELECT 
+        o.id_obra, 
+        o.data_criacao, 
+        o.titulo, 
+        o.resumo, 
+        o.data_publi, 
+        u.nome as usuario, 
+        li.link as links, 
+        im.link as imgs,
+        ass.nome as assuntos, 
+        au.nome as autores
+    FROM obra o
+    INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+    INNER JOIN autor au ON au.id_autor = oa.id_autor
+    INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+    INNER JOIN link li ON li.id_link = ol.id_link
+    INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+    INNER JOIN img im ON im.id_img = oi.id_img
+    WHERE au.nome ILIKE '%' || '${nome}' || '%'
+) as sub
+GROUP BY 
+    sub.id_obra, sub.data_criacao, sub.titulo, sub.resumo, sub.data_publi, sub.usuario
+ORDER BY 
+    sub.id_obra;
+
     `);
 
     if (obra.rows.length === 0) {
@@ -560,27 +678,22 @@ const MostrarPeloNomeUsuario = async (req, res) => {
     o.id_obra, o.data_criacao, o.titulo, o.data_publi, o.resumo, u.nome as usuario, 
     string_agg(DISTINCT li.link, ', ') as links, 
     string_agg(DISTINCT im.link, ', ') as imgs,
-    string_agg(DISTINCT as.nome, ', ') ass assuntos, string_agg(au.nome, ', ') as autores
-FROM 
-    obra o
-INNER JOIN 
-    obras_autores oa ON o.id_obra = oa.id_obra
-INNER JOIN 
-    autor au ON au.id_autor = oa.id_autor
-INNER JOIN 
-    usuario u ON u.id_usuario = o.id_usuario
-    INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
-    INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-WHERE 
-    u.nome ILIKE '%' || '${nome}' || '%'
-GROUP BY 
-    o.id_obra, o.titulo, o.resumo, u.nome, o.data_criacao, o.data_publi, as.nome, li.link, im.link, au.nome
-ORDER BY 
-    o.id_obra;
+    string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+    string_agg(DISTINCT au.nome, ', ') as autores
+FROM obra o
+INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+INNER JOIN autor au ON au.id_autor = oa.id_autor
+INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
+INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+INNER JOIN link li ON li.id_link = ol.id_link
+INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+INNER JOIN img im ON im.id_img = oi.id_img
+WHERE u.nome ILIKE '%' || '${nome}' || '%'
+GROUP BY o.id_obra, o.data_criacao, o.titulo, o.data_publi, o.resumo, u.nome
+ORDER BY o.id_obra;
+
     `);
 
     if (obra.rows.length === 0) {
@@ -650,26 +763,26 @@ const MostrarObraPeloIDUsuario = async (req, res) => {
 const MostrarTodasobraCapistrano = async (req, res) => {
   try {
     const obra = await pool.query(`
-        SELECT 
-        o.id_obra, o.data_criacao, o.titulo, o.resumo, o.data_publi, u.nome as usuario,
-        string_agg(DISTINCT li.link, ', ') as links, 
-        string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(DISTINCT au.nome, ', ') as autores
-        FROM obra o
-        inner join obras_autores oa on o.id_obra = oa.id_obra
-        inner join autor au on au.id_autor = oa.id_autor
-        inner join usuario u on u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    SELECT 
+    o.id_obra, o.data_criacao, o.titulo, o.resumo, o.data_publi, u.nome as usuario,
+    string_agg(DISTINCT li.link, ', ') as links, 
+    string_agg(DISTINCT im.link, ', ') as imgs,
+    string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+    string_agg(DISTINCT au.nome, ', ') as autores
+FROM obra o
+INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+INNER JOIN autor au ON au.id_autor = oa.id_autor
+INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
 INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-        where au.nome = 'Capistrano de Abreu'
-        
-        group by o.id_obra, au.nome, o.titulo, o.data_criacao, o.resumo, u.nome, ass.nome, li.link, im.link, au.nome
-        
-        order by o.id_obra`);
+INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+INNER JOIN link li ON li.id_link = ol.id_link
+INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+INNER JOIN img im ON im.id_img = oi.id_img
+WHERE au.nome = 'Capistrano De Abreu'
+GROUP BY o.id_obra, o.data_criacao, o.titulo, o.resumo, o.data_publi, u.nome
+ORDER BY o.id_obra;
+`);
 
     if (obra.rows.length === 0) {
       return res
@@ -688,26 +801,26 @@ INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
 const MostrarTodasobraOutrosAutores = async (req, res) => {
   try {
     const obra = await pool.query(`
-        SELECT 
-        o.id_obra, o.titulo, o.resumo, o.data_publi, u.nome as usuario, 
-        string_agg(DISTINCT li.link, ', ') as links, 
-        string_agg(DISTINCT im.link, ', ') as imgs,
-        string_agg(DISTINCT ass.nome, ', ') as assuntos, string_agg(DISTINCT au.nome, ', ') as autores
-        FROM obra o
-        inner join obras_autores oa on o.id_obra = oa.id_obra
-        inner join autor au on au.id_autor = oa.id_autor
-        inner join usuario u on u.id_usuario = o.id_usuario
-        INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
+    SELECT 
+    o.id_obra, o.titulo, o.resumo, o.data_publi, u.nome as usuario, 
+    string_agg(DISTINCT li.link, ', ') as links, 
+    string_agg(DISTINCT im.link, ', ') as imgs,
+    string_agg(DISTINCT ass.nome, ', ') as assuntos, 
+    string_agg(DISTINCT au.nome, ', ') as autores
+FROM obra o
+INNER JOIN obras_autores oa ON o.id_obra = oa.id_obra
+INNER JOIN autor au ON au.id_autor = oa.id_autor
+INNER JOIN usuario u ON u.id_usuario = o.id_usuario
+INNER JOIN obras_assuntos oas ON o.id_obra = oas.id_obra
 INNER JOIN assunto ass ON ass.id_assunto = oas.id_assunto
-    INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
-        INNER JOIN link li ON li.id_link = ol.id_link
-        INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
-        INNER JOIN img im ON im.id_img = oi.id_img
-        where au.nome <> 'Capistrano de Abreu'
-        
-        group by o.id_obra, au.nome, o.data_criacao, o.titulo, o.resumo, u.nome, ass.nome, li.link, im.link
-        
-        order by o.id_obra`);
+INNER JOIN obras_links ol ON ol.id_obra = o.id_obra
+INNER JOIN link li ON li.id_link = ol.id_link
+INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
+INNER JOIN img im ON im.id_img = oi.id_img
+WHERE au.nome <> 'Capistrano de Abreu'
+GROUP BY o.id_obra, u.nome, o.titulo, o.resumo, o.data_publi
+ORDER BY o.id_obra;
+`);
 
     if (obra.rows.length === 0) {
       return res

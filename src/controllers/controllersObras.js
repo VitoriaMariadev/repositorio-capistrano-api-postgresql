@@ -223,7 +223,7 @@ const MostrarTodasObrasPorAssunto = async (req, res) => {
     INNER JOIN link li ON li.id_link = ol.id_link
     INNER JOIN obras_imgs oi ON oi.id_obra = o.id_obra
     INNER JOIN img im ON im.id_img = oi.id_img
-    WHERE ass.id_assunto = $1
+    WHERE ass.nome = $1
     GROUP BY o.id_obra, u.nome, o.titulo, o.data_publi, o.data_criacao, o.resumo;
     
         `,

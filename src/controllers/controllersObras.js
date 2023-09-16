@@ -154,6 +154,7 @@ const MostrarObraPeloID = async (req, res) => {
     o.data_criacao,
     o.resumo,
     u.nome as usuario,
+    u.id_usuario,
     string_agg(DISTINCT li.link, ', ') as links,
     string_agg(DISTINCT im.link, ', ') as imgs,
     string_agg(DISTINCT ass.nome, ', ') as assuntos,
@@ -181,6 +182,7 @@ GROUP BY
     o.data_criacao,
     o.resumo,
     u.nome,
+    u.id_usuario,
     o.descricao;
     ;`);
 

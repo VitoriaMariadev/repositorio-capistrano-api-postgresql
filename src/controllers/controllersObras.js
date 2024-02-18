@@ -853,6 +853,12 @@ const CadastrarObra = async (req, res) => {
     usuario,
   } = req.body;
 
+  if (!link || !img || link.length === 0 || img.length === 0) {
+    return res
+        .status(200) // Código de status corrigido
+        .json({ Mensagem: "Há campo(s) vazio(s).", status: 400 });
+  }
+
   const TituloFormatado = primeiraLetraMaiuscula(titulo);
   const descricaoFormatada = descricao.trim();
   const resumoFormatado = capitalizarEPontuar(resumo).trim();
